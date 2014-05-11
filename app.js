@@ -11,7 +11,8 @@ var interpret = function interpret(instructions, stack, callback) {
   var instructionSet = {
     Add: 0x00,
     Read: 0x01,
-    Write: 0x02
+    Write: 0x02,
+    Subtract: 0x03
   };
 
   function async(arg, callback) {
@@ -28,6 +29,11 @@ var interpret = function interpret(instructions, stack, callback) {
 
         case instructionSet.Add:
           stack.push(stack.pop() + stack.pop());
+          async(++ip, series);
+          break;
+
+        case instructionSet.Subtract:
+          stack.push(stack.pop() - stack.pop());
           async(++ip, series);
           break;
 
