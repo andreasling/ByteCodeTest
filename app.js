@@ -12,7 +12,8 @@ var interpret = function interpret(instructions, stack, callback) {
     Add: 0x00,
     Read: 0x01,
     Write: 0x02,
-    Subtract: 0x03
+    Subtract: 0x03,
+    Literal: 0x04
   };
 
   function async(arg, callback) {
@@ -49,6 +50,11 @@ var interpret = function interpret(instructions, stack, callback) {
           async(++ip, series);
           break;
 
+        case instructionSet.Literal:
+          stack.push(instructions[++ip]);
+          async(++ip, series);
+          break;
+
         default:
           throw new Error("Invalid bytecode " + instruction + " at " + i + ".");
       };
@@ -68,7 +74,7 @@ var interpret = function interpret(instructions, stack, callback) {
 };
 
 var stack = [];
-var instructions = [0x01, 0x01, 0x00, 0x02];
+var instructions = [0x04, 0x01, 0x04, 0x02, 0x00, 0x02];
 
 console.log("instructions:", instructions);
 console.log("stack:", stack);
