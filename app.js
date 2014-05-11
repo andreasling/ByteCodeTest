@@ -1,24 +1,42 @@
 "use strict";
 
-var interpret = function interpret(instructions, stack) {
+var interpret = function interpret(instructions, stack, callback) {
 
   var instructionSet = {
-    Add: 0x00,
+    Add: 0x00
   };
 
-  instructions.forEach(function(instruction, i) {
+  function async(arg, callback) {
+    setTimeout(callback(arg), 0);
+  }
 
-    switch(instruction) {
+  function series(ip) {
 
-      case instructionSet.Add:
-        stack.push(stack.pop() + stack.pop());
-        break;
+    if (ip < instructions.length) {
 
-      default:
-        throw new Error("Invalid bytecode " + instruction + " at " + i + ".");
-    };
-  });
+      var instruction = instructions[ip];
 
+      switch(instruction) {
+
+        case instructionSet.Add:
+          stack.push(stack.pop() + stack.pop());
+          async(++ip, series);
+          break;
+
+        default:
+          throw new Error("Invalid bytecode " + instruction + " at " + i + ".");
+      };
+
+    } else {
+
+      callback();
+
+    }
+
+  }
+
+  series(0);
+  
 };
 
 var stack = [1,2];
@@ -27,6 +45,7 @@ var instructions = [0x00];
 console.log("instructions:", instructions);
 console.log("stack:", stack);
 
-interpret(instructions, stack);
+interpret(instructions, stack, function () {
+  console.log("stack:", stack); 
+});
 
-console.log("stack:", stack);
